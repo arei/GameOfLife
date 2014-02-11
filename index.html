@@ -16,7 +16,7 @@ Github: http://github.com/arei/GameOfLife
 
 		<!-- Load our style sheets.  This includes a css reset to help us look
 		the same across all the different browser. -->
-		<link rel="stylesheet" type="text/css" href="meyerweb.reset.css" />
+		<link rel="stylesheet" type="text/css" href="libs/meyerweb.reset.css" />
 		<link rel="stylesheet" type="text/css" href="index.css" />
 	</head>
 
@@ -125,7 +125,7 @@ Github: http://github.com/arei/GameOfLife
 					To run this application simply press the <b>Start</b> button or the <b>Step</b> above.  <b>Start</b> will run the game without interruption, whereas <b>Step</b> will only run one single tick of the game engine. You can use <b>Reset</b> to regenerate a new randomly seeded board at any time, even while running. <b>Stop</b> will stop a currently running game.
 				</div>
 				<div class="para">
-					A number of options about the game can also be set while the games is not running.  The include <b>Cell Size</b> which indicates how big a single cell should be, <b>Initial Seed</b> which determines the percentage of any single cell being on or off when the board is randomly generated, <b>Repeating</b> which, when on, causes the game to automatically generate a new board when the prior game comes to it's conclusion, and <b>Throttling</b> which will limit the number of game itterations that may occur in a single second.
+					A number of options about the game can also be set while the games is not running.  The include <b>Cell Size</b> which indicates how big a single cell should be, <b>Initial Seed</b> which determines the percentage of any single cell being on or off when the board is randomly generated, <b>Repeating</b> which, when on, causes the game to automatically generate a new board when the prior game comes to it's conclusion, <b>Throttling</b> which will limit the number of game itterations that may occur in a single second, and <b>Edges</b> which determine how the edges of the game board come into play (dead, alive or wrapped).
 				</div>
 				<div class="para">
 					Thanks for trying out my implementation of Conway's Game of Life.  Please check out <a href="http://arei.net" target="areinet">my website</a>. or find me <a href="http://twitter.com/areinet" target="areinet">on twitter</a>.  You may also <a href="http://github.com/arei/GameOfLife" target="areinet">view this source code</a> on github.
@@ -147,7 +147,7 @@ Github: http://github.com/arei/GameOfLife
 		</div>
 
 		<!-- Scripts down the bottom so they load after the dom -->
-		<script src="prototype-1.6.1.js"></script>
+		<script src="libs/prototype-1.6.1.js"></script>
 		<script src="index.js"></script>
 
 	</body>
