@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+
+<!--
+
+Conway's Game of Life
+By Glen R. Goodwin (http://arei.net or @areinet)
+Github: http://github.com/arei/GameOfLife
+
+-->
+
+ 	<!-- Our document header -->
+	<head>
+		<!-- The title -->
+		<title>Game of Life</title>
+
+		<!-- Load our style sheets.  This includes a css reset to help us look
+		the same across all the different browser. -->
+		<link rel="stylesheet" type="text/css" href="meyerweb.reset.css" />
+		<link rel="stylesheet" type="text/css" href="index.css" />
+	</head>
+
+	<!-- Our document body -->
+	<body>
+		<div class="main">
+
+			<!-- The header bar -->
+			<div class="header">
+
+				<!-- Buttons on the left -->
+				<div class="left buttons">
+					<div id="button-start" class="button disabled">Start</div>
+					<div id="button-stop" class="button disabled">Stop</div>
+					<div id="button-reset" class="button disabled">Reset</div>
+					<div id="button-step" class="button disabled">Step</div>
+				</div>
+
+				<!-- Options on the left after the buttons -->
+				<div class="left options">
+					<div id="combobox-cell" class="combobox disabled">
+						<div class="selected">20x20 Cells</div>
+						<div class="menu">
+							<div id="cell-100x100" class="comboitem">100x100 Cells</div>
+							<div id="cell-50x50" class="comboitem">50x50 Cells</div>
+							<div id="cell-25x25" class="comboitem">25x25 Cells</div>
+							<div id="cell-20x20" class="comboitem">20x20 Cells</div>
+							<div id="cell-15x15" class="comboitem">15x15 Cells</div>
+							<div id="cell-10x10" class="comboitem">10x10 Cells</div>
+							<div id="cell-5x5" class="comboitem">5x5 Cells</div>
+						</div>
+					</div>
+					<div id="combobox-seed" class="combobox disabled">
+						<div class="selected">Initially Seed 50%</div>
+						<div class="menu">
+							<div id="seed-99" class="comboitem">Initially Seed 99%</div>
+							<div id="seed-90" class="comboitem">Initially Seed 90%</div>
+							<div id="seed-80" class="comboitem">Initially Seed 80%</div>
+							<div id="seed-70" class="comboitem">Initially Seed 70%</div>
+							<div id="seed-60" class="comboitem">Initially Seed 60%</div>
+							<div id="seed-50" class="comboitem">Initially Seed 50%</div>
+							<div id="seed-40" class="comboitem">Initially Seed 40%</div>
+							<div id="seed-30" class="comboitem">Initially Seed 30%</div>
+							<div id="seed-20" class="comboitem">Initially Seed 20%</div>
+							<div id="seed-10" class="comboitem">Initially Seed 10%</div>
+							<div id="seed-1" class="comboitem">Initially Seed 1%</div>
+						</div>
+					</div>
+					<div id="combobox-edges" class="combobox disabled">
+						<div class="selected">Edges are Dead</div>
+						<div class="menu">
+							<div id="edges-dead" class="comboitem">Edges are Dead</div>
+							<div id="edges-alive" class="comboitem">Edges are Alive</div>
+							<div id="edges-wrapped" class="comboitem">Edges are Wrapped</div>
+						</div>
+					</div>
+					<div id="combobox-repeat" class="combobox disabled">
+						<div class="selected">Auto-repeat: Off</div>
+						<div class="menu">
+							<div id="repeat-on" class="comboitem">Auto-repeat: On</div>
+							<div id="repeat-off" class="comboitem">Auto-repeat: Off</div>
+						</div>
+					</div>
+					<div id="combobox-throttle" class="combobox disabled">
+						<div class="selected">No Throttling</div>
+						<div class="menu">
+							<div id="throttle-off" class="comboitem">No Throttling</div>
+							<div id="throttle-quarter" class="comboitem">.25 Ticks per Second</div>
+							<div id="throttle-half" class="comboitem">.5 Ticks per Second</div>
+							<div id="throttle-1" class="comboitem">1 Tick per Second</div>
+							<div id="throttle-2" class="comboitem">2 Ticks per Second</div>
+							<div id="throttle-3" class="comboitem">3 Ticks per Second</div>
+							<div id="throttle-5" class="comboitem">5 Ticks per Second</div>
+							<div id="throttle-10" class="comboitem">10 Ticks per Second</div>
+							<div id="throttle-20" class="comboitem">20 Ticks per Second</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Counters/Timers on the right -->
+				<div class="right counter">
+					<div class="title">FPS</div>
+					<div id="counter-fps" class="value">0.00</div>
+				</div>
+				<div class="right counter">
+					<div class="title">Avg Time/Tick</div>
+					<div id="counter-average-tick" class="value">0.00 ms</div>
+				</div>
+				<div class="right counter">
+					<div class="title">Ticks</div>
+					<div id="counter-ticks" class="value">0</div>
+				</div>
+				<div class="right counter">
+					<div class="title">Avg Time/Render</div>
+					<div id="counter-average-render" class="value">0.00 ms</div>
+				</div>
+			</div>
+
+			<!-- Our busy/initializing overlay -->
+			<div id="busy" class="busy" style="display: none;">Initializing</div>
+
+			<!-- Our instructions overlay -->
+			<div id="instructions" class="instructions">
+				<div class="title">Welcome to Conway's Game of Life.</div>
+				<div class="para">
+					To run this application simply press the <b>Start</b> button or the <b>Step</b> above.  <b>Start</b> will run the game without interruption, whereas <b>Step</b> will only run one single tick of the game engine. You can use <b>Reset</b> to regenerate a new randomly seeded board at any time, even while running. <b>Stop</b> will stop a currently running game.
+				</div>
+				<div class="para">
+					A number of options about the game can also be set while the games is not running.  The include <b>Cell Size</b> which indicates how big a single cell should be, <b>Initial Seed</b> which determines the percentage of any single cell being on or off when the board is randomly generated, <b>Repeating</b> which, when on, causes the game to automatically generate a new board when the prior game comes to it's conclusion, and <b>Throttling</b> which will limit the number of game itterations that may occur in a single second.
+				</div>
+				<div class="para">
+					Thanks for trying out my implementation of Conway's Game of Life.  Please check out <a href="http://arei.net" target="areinet">my website</a>. or find me <a href="http://twitter.com/areinet" target="areinet">on twitter</a>.  You may also <a href="http://github.com/arei/GameOfLife" target="areinet">view this source code</a> on github.
+				</div>
+			</div>
+
+			<!-- The element of our main board -->
+			<div id="board" class="board"></div>
+
+			<!-- The footer comes last -->
+			<div class="footer">
+				<div class="left">
+					<a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life" target="wikipedia">Conway's Game of Life</a> - By Glen R. Goodwin (<a href="http://twitter.com/areinet" target="areinet">@areinet</a>) - <a href="http://arei.net" target="areinet">http://arei.net</a>
+				</div>
+				<div class="right">
+					Copyright 2014, Released under the <a href="https://github.com/arei/GameOfLife/blob/master/LICENSE.txt" target="areinet">MIT License</a> - <a href="http://github.com/arei/GameOfLife" target="areinet">Source Code</a> available on Github
+				</div>
+			</div>
+		</div>
+
+		<!-- Scripts down the bottom so they load after the dom -->
+		<script src="prototype-1.6.1.js"></script>
+		<script src="index.js"></script>
+
+	</body>
+</html>

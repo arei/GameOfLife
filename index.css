@@ -1,0 +1,391 @@
+/*
+
+Conway's Game of Life
+By Glen R. Goodwin (http://arei.net or @areinet)
+Github: http://github.com/arei/GameOfLife
+
+*/
+
+/* A quick piece of reset */
+
+*
+{
+	box-sizing: border-box;
+}
+
+/* Make sure we don't render scrollbars */
+
+html
+{
+	overflow: hidden;
+}
+
+/* Layout the main panel */
+
+.main
+{
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
+	background-color: #CCC;
+	background: linear-gradient(135deg,#000 0%,#888 120%);
+	font-family: sans-serif;
+	margin: 0px;
+	padding: 0px;
+}
+
+/* Layout the busy/intializing overlay */
+
+.main > .busy
+{
+	position: absolute;
+	left: 0px;
+	right: 0px;
+	top: 200px;
+	border-top: 5px solid white;
+	border-bottom: 5px solid white;
+	box-shadow: 20px 20px 25px black;
+	background-color: #000;
+	background: radial-gradient(circle at center center, #000,#444);
+	color: #FFF;
+	text-shadow: 0px 5px 15px black;
+	z-index: 200;
+	font-size: 72px;
+	font-weight: bold;
+	text-align: center;
+	text-transform: uppercase;
+}
+
+/* Layout the instructions overlay */
+
+.main > .instructions
+{
+	position: absolute;
+	left: 0px;
+	right: 0px;
+	top: 100px;
+	border-top: 5px solid white;
+	border-bottom: 5px solid white;
+	box-shadow: 20px 20px 25px black;
+	background-color: #000;
+	background: radial-gradient(circle at center center, #000,#444);
+	color: #FFF;
+	text-shadow: 0px 5px 15px black;
+	z-index: 300;
+	font-size: 18px;
+	font-weight: bold;
+	padding: 20px 50px;
+}
+
+.main > .instructions > .title
+{
+	font-weight: bold;
+	font-size: 24px;
+	border-bottom: 2px solid white;
+	color: yellow;
+}
+
+.main > .instructions > .para
+{
+	margin: 15px 0px;
+}
+
+.main > .instructions b
+{
+	font-weight: bold;
+	color: orange;
+}
+
+.main > .instructions a
+{
+	color: #0FF;
+	text-decoration: none;
+}
+
+.main > .instructions a:hover
+{
+	color: #0FF;
+	text-decoration: none;
+}
+
+/* Layout the header */
+
+.main > .header
+{
+	position: absolute;
+	left: 0px;
+	right: 0px;
+	top: 0px;
+	height: 40px;
+	background: #000;
+	padding: 5px 10px;
+	clear: both;
+	overflow: visible;
+	z-index: 400;
+	border-bottom: 1px solid white;
+}
+
+.main > .header > .right
+{
+	float: right;
+}
+
+.main > .header > .left
+{
+	float: left;
+}
+
+.main > .header > .counter
+{
+	width: 100px;
+	margin-left: 3px;
+}
+
+.main > .header > .counter > .title
+{
+	font-size: 11px;
+	color: white;
+	text-align: center;
+	white-space: nowrap;
+	margin-bottom: 2px;
+}
+
+.main > .header > .counter > .value
+{
+	border: 1px inset black;
+	border-radius: 2px;
+	background: white;
+	padding: 5px 3px 3px 3px;
+	font-size: 18px;
+	text-align: center;
+	font-weight: bold;
+}
+
+.main > .header> .buttons
+{
+	width: 118px;
+}
+
+.main > .header> .buttons > .button
+{
+	float: left;
+	margin: 3px;
+	width: 50px;
+	border: 1px solid #444;
+	color: #0FF;
+	font-size: 12px;
+	font-weight: bold;
+	text-align: center;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+.main > .header> .buttons > .button:hover
+{
+	color: white;
+	border: 1px outset #444;
+	background-color: #044;
+	background: linear-gradient(0deg,#088,#044);
+}
+
+.main > .header> .buttons > .button:active
+{
+	color: white;
+	border: 1px inset #444;
+	background-color: #044;
+	background: linear-gradient(0deg,#088,#044);
+}
+
+.main > .header> .buttons > .button.disabled
+{
+	border: 1px solid #444;
+	color: #444;
+	background-color: transparent;
+	background: transparent;
+}
+
+.main > .header> .options
+{
+	width: 408px;
+}
+
+.main > .header> .options > .combobox
+{
+	position: relative;
+	float: left;
+	margin: 3px;
+	width: 130px;
+	font-size: 12px;
+	font-weight: bold;
+	text-align: center;
+	cursor: pointer;
+}
+
+.main > .header> .options > .combobox > .selected
+{
+	color: #0FF;
+	border: 1px solid #444;
+	border-radius: 5px;
+	background-color: transparent;
+	background: transparent;
+}
+
+.main > .header> .options > .combobox > .selected:hover
+{
+	color: white;
+	border: 1px outset #444;
+	background-color: #044;
+	background: linear-gradient(0deg,#088,#044);
+}
+
+.main > .header> .options > .combobox > .selected:active
+{
+	color: white;
+	border: 1px inset #444;
+	background-color: #044;
+	background: linear-gradient(0deg,#088,#044);
+}
+
+.main > .header> .options > .combobox.disabled > .selected
+{
+	border: 1px solid #444;
+	color: #444;
+	background-color: transparent;
+	background: transparent;
+}
+
+.main > .header> .options > .combobox > .menu
+{
+	width: 130px;
+	display: none;
+	position: absolute;
+	top: 2.75ex;
+	z-index: 401;
+}
+
+.main > .header> .options > .combobox > .menu > .comboitem
+{
+	display: block;
+	overflow: hidden;
+	border: 1px solid transparent;
+	border-radius: 0px;
+	box-shadow: 2px 2px 5px 0px #444;
+	background-color: #044;
+	background: linear-gradient(0deg,#088,#044);
+	color: #0FF;
+	margin-bottom: 2px;
+	z-index: 402;
+}
+
+.main > .header> .options > .combobox > .menu > .comboitem:hover
+{
+	color: white;
+}
+
+.main > .header> .options > .combobox > .menu > .comboitem:active
+{
+	color: white;
+	border: 1px inset #444;
+	background-color: #044;
+	background: linear-gradient(0deg,#088,#044);
+}
+
+.main > .header> .options > .combobox.open
+{
+}
+
+.main > .header> .options > .combobox.open > .selected
+{
+	color: white;
+}
+
+.main > .header> .options > .combobox.open > .selected:hover
+{
+	color: white;
+	border: 1px solid #444;
+	background-color: transparent;
+	background: transparent;
+}
+
+.main > .header> .options > .combobox.open > .selected:active
+{
+	color: white;
+	border: 1px solid #444;
+	background-color: transparent;
+	background: transparent;
+}
+
+.main > .header> .options > .combobox.open > .menu
+{
+	display: block;
+}
+
+/* Layout the board and the cells */
+
+.main > .board
+{
+	position: absolute;
+	top: 50px;
+	left: 10px;
+	right: 10px;
+	bottom: 40px;
+	z-index: 100;
+}
+
+.main > .board > .cell
+{
+	position: absolute;
+	color: transparent;
+	font-size: 10px;
+	white-space: nowrap;
+	overflow: hidden;
+	padding; 2px 3px;
+	z-index: 101;
+	border: 1px outset black;
+	background-color: #0F0;
+	background: radial-gradient(circle 20px at 5px 5px, #0F0,#080);
+	visibility: hidden;
+}
+
+/* Layout the footer */
+
+.main > .footer
+{
+	position: absolute;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
+	height: 22px;
+	background: #000;
+	padding: 5px 10px;
+	clear: both;
+	overflow: visible;
+	z-index: 500;
+	font-size: 11px;
+	color: #888;
+	border-top: 1px solid white;
+}
+
+.main > .footer a
+{
+	color: #0FF;
+	text-decoration: none;
+}
+
+.main > .footer a:hover
+{
+	color: white;
+	text-decoration: underline;
+}
+
+.main > .footer > .left
+{
+	float: left;
+}
+
+.main > .footer > .right
+{
+	float: right;
+}

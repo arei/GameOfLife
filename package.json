@@ -1,0 +1,26 @@
+{
+  "author": "Glen R. Goodwin (http://www.arei.net)",
+  "name": "GameOfLife",
+  "keywords": [ "Game of Life","Game","Life","Conway","Conway's","Conway's Game of Life" ],
+  "description": "Conway's Game of Life",
+  "version": "1.0.0",
+  "homepage": "http://github.com/arei/GameOfLife",
+  "bugs": {
+        "url": "http://github.com/arei/GameOfLife/issues"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://github.com/arei/GameOfLife/blob/master/LICENSE.txt"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/arei/GameOfLife.git"
+  },
+  "main": "index.js",
+  "engines": {},
+  "dependencies": {},
+  "devDependencies": {},
+  "optionalDependencies": {}
+}
