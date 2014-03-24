@@ -41,6 +41,51 @@ var zip = function(base,value) {
 	return base.slice(0,base.length-value.length)+value;
 };
 
+// Defer function for executing a function on the next possible
+// chance in the execution queue. We try three different approaches
+// here to see which one is faster.
+var RAF = window.defer_requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame;
+var defer_requestAnimationFrame = function(f) {
+	if (!Object.isFunction(f)) throw new Error("Missing function as first argument.");
+
+	var me = this;
+	var args = $A(arguments).slice(1);
+
+	return RAF(function(){
+		f.apply(me,args);
+	});
+};
+var defer_postMessage = function(f) {
+	if (!Object.isFunction(f)) throw new Error("Missing function as first argument.");
+
+	var me = this;
+	var args = $A(arguments).slice(1);
+
+	var handler = function() {
+		window.removeEventListener("message",handler);
+		f.apply(me,args);
+	};
+
+	window.addEventListener("message",handler);
+	window.postMessage("hi",document.location.href);
+};
+var defer_prototype = function(f){
+	if (!Object.isFunction(f)) throw new Error("Missing function as first argument.");
+
+	var args = $A(arguments).slice(1);
+
+	return f.defer.apply(f,args);
+};
+var defer = function() {
+	var args = $A(arguments);
+	// return defer_requestAnimationFrame.apply(this,args);
+	// return defer_postMessage.apply(this,args);
+	// return defer_prototype.apply(this,args);
+	if (window.postMessage) return defer_postMessage.apply(this,args);
+	else if (RAF) return defer_requestAnimationFrame.apply(this,args);
+	else return defer_prototype.apply(this,args);
+}
+
 // A class to represent our Board state. Really, this just handles
 // the rows/cols values
 var Board = function(rows,cols) {
@@ -263,7 +308,7 @@ var Renderer = function(board,cellular,compute) {
 
 	var me = this;
 
-	var started = new Date().getTime();
+	var started = null;
 	var completed = null;
 
 	// Get all our our various elements we are going to update.
@@ -299,6 +344,7 @@ var Renderer = function(board,cellular,compute) {
 		rendercount += 1;
 
 		var start = new Date().getTime();
+		if (!started) started = start;
 
 		// For each cell set its visibility to hidden, if state is false,
 		// visible otherwise.
@@ -310,8 +356,8 @@ var Renderer = function(board,cellular,compute) {
 		var now = new Date().getTime();
 		if (compute.isDead()) completed = now;
 
-		var secs = (((now-started)/1000)|0)+1;
-		var fps = Math.min(999.99,Math.max(0,me.getRenderCount()/secs));
+		var secs = (((now-started)/1000));
+		var fps = Math.min(999.99,Math.max(0,secs && me.getRenderCount()/secs || 0));
 		counterfps.update(zip("     ",fps.toFixed(2)));
 
 		var ticks = compute.getTickCount();
@@ -466,7 +512,7 @@ var Game = function() {
 		renderer.render();
 		updateButtons();
 
-		setBusy.defer(false);
+		defer(setBusy,false);
 	};
 
 	// Start running a game
@@ -475,7 +521,7 @@ var Game = function() {
 
 		paused = false;
 		updateButtons();
-		loop.defer();
+		defer(loop);
 	};
 
 	// Stop running a game.
@@ -502,8 +548,8 @@ var Game = function() {
 		if (compute.isDead()) {
 			if (!paused && AUTO_REPEAT) {
 				setBusy(true);
-				reset.defer();
-				start.defer();
+				defer(reset);
+				defer(start);
 			}
 			updateButtons();
 		}
@@ -514,7 +560,7 @@ var Game = function() {
 
 			if (!paused) {
 				if (nexttick) loop.delay(nexttick/1000);
-				else loop.defer();
+				else defer(loop);
 			}
 		}
 	};
@@ -678,7 +724,7 @@ var Game = function() {
 
 	// Reset the game.  This is run for the initial load of the app to have
 	// a ncie new board read.
-	reset.defer();
+	defer(reset);
 };
 
 // Once everything is ready, lets start our game.

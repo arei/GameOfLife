@@ -29,8 +29,8 @@ html
 	left: 0px;
 	right: 0px;
 	bottom: 0px;
-	background-color: #CCC;
-	background: linear-gradient(135deg,#000 0%,#888 120%);
+	background-color: #333;
+	/*background: linear-gradient(135deg,#000 0%,#888 120%);*/
 	font-family: sans-serif;
 	margin: 0px;
 	padding: 0px;
@@ -343,7 +343,7 @@ html
 	overflow: hidden;
 	padding; 2px 3px;
 	z-index: 101;
-	border: 1px outset black;
+	/*border: 1px outset black;*/
 	background-color: #0F0;
 	background: radial-gradient(circle 20px at 5px 5px, #0F0,#080);
 	visibility: hidden;
